@@ -1,0 +1,26 @@
+name: avalon-reco
+
+# Serves the recommender on the Block 2 platform network for live demos.
+# (Kubernetes manifests in k8s/ are the production-shaped deployment.)
+
+services:
+  reco-api:
+    build: .
+    container_name: avalon-reco-api
+    ports:
+      - "${RECO_API_PORT:-8000}:8000"
+    environment:
+      # cold-start context lookups; the API degrades gracefully without it
+      AVALON_DSN: postgresql://${POSTGRES_USER:-avalon}:${POSTGRES_PASSWORD:-avalon_dev_password}@postgres:5432/${POSTGRES_DB:-avalon}
+      ADMIN_TOKEN: ${ADMIN_TOKEN:-avalon_admin}
+      MODEL_PATH: /app/models/latest.joblib
+    volumes:
+      # host models/ overrides the baked-in artifact so retraining + /admin/reload
+      # hot-swaps without a rebuild
+      - ./models:/app/models:ro
+    restart: unless-stopped
+    networks: [avalon]
+
+networks:
+  avalon:
+    external: true

@@ -1,0 +1,21 @@
+# model artifacts are versioned by the registry, not by git (latest.joblib
+# is built by training or CI)
+models/*.joblib
+models/metrics-*.json
+
+# monitoring output
+monitoring/reports/
+
+# python
+__pycache__/
+*.pyc
+.venv/
+.pytest_cache/
+.ruff_cache/
+
+# notebooks
+.ipynb_checkpoints/
+
+# os / env
+.DS_Store
+.env
